@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@media (max-width: 640px) {
+    .bnb, .user {
+      flex-direction: column;
+      justify-content: center;
+      padding: 1rem;
+    }
+    header{
+        padding:0.1rem;
+    }
+    .search2{
+        display: flex;
+        flex-direction: column;
+      }
+      .search{
+        gap:0;
+      }
+      .acc{
+        padding-left: 2rem ;
+        padding-right: 2rem;
+      }
+      .account{
+        margin-top: 1rem;
+      }
+      .places{
+        margin-top: 1rem;
+      }
+      nav{
+        display: flex;
+        flex-direction: column;
+        max-width: 80vw;
+        margin:auto;
+      }
+  }
+ input[type="text"],input[type="password"],input[type="email"]{
+    @apply w-full border my-2 py-2 px-3 rounded-xl; 
+    textarea{
+      @apply w-full border my-2 py-2 px-3 rounded-xl; 
+    }
+ }
+ form{
+    width:500px;
+ }
+ @media (max-width: 550px) {
+   form{
+    width: 94vw;
+   }
+   .placeImage{
+    height: 200px;
+    width:200px;
+   }
+   .placeMain{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+   }
+   .placep{
+    max-width:400px;
+   }
+   textarea{
+    width:250px;
+    height:150px;
+  }
+  }
+  @media (min-width: 550px) {
+    .placeImage{
+     height: 150px;
+     width:150px;
+    }
+    .placeMain{
+     display: flex;
+     flex-direction: row;
+    }
+    textarea{
+      width:800px;
+      height:100px;
+    }
+   }
+  @media (min-width: 640px) {
+    .acc{
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+    .account{
+      margin-top:4rem;
+    }
+  }
+label{
+  display: block;
+}
+.form-div{
+  display: inline-block;
+  max-width: 500px;
+}
+form{
+  max-width: 90vw;
+  margin:auto;
+}
+img{
+  min-width: 50px;
+  background-position: cover;
+}
+.home{
+  max-width: 94vw;
+  margin:auto;
+}
+@keyframes homeimg {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.homeimg {
+  animation: fadeIn 1s forwards;
+}
