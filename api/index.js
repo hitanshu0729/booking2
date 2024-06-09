@@ -17,6 +17,13 @@ app.use(
     origin: "https://deploy-mern-frontend-three-eight.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+      "Origin",
+    ],
   })
 );
 const bcrypt = require("bcryptjs");
