@@ -12,7 +12,10 @@ const imageDownloader = require("image-downloader");
 const mongoose = require("mongoose");
 require("dotenv").config();
 app.use("/uploads", express.static(__dirname + "/uploads"));
-const allowedOrigins = ['https://deploy-mern-frontend-three-eight.vercel.app', 'http://localhost:5173'];
+const allowedOrigins = [
+  "https://deploy-mern-frontend-three-eight.vercel.app",
+  "http://localhost:5173",
+];
 
 app.use(
   cors({
@@ -20,12 +23,18 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'], // Allowed headers
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+      "Origin",
+    ], // Allowed headers
   })
 );
 const bcrypt = require("bcryptjs");
@@ -134,6 +143,7 @@ app.post("/places", (req, res) => {
   });
 });
 app.get("/profile", (req, res) => {
+  console.log(req);
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
@@ -267,12 +277,13 @@ app.get("/places", async (req, res) => {
   res.json(data);
 });
 app.get("/bookings", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URI);
+  await mongoose.connect(process.env.MONGO_URI);
+  console.log(req);
   const userData = await getUserDataFromReq(req);
   res.json(await Booking.find({ user: userData.id }).populate("place"));
 });
 app.post("/bookings", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URI);
+  // mongoose.connect(process.env.MONGO_URI);
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
     req.body;
