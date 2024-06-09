@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const path = require("path");
+const bodyParser = require("body-parser");
 const multer = require("multer");
 const PlaceModel = require("./Models/Place.js");
 const Booking = require("./Models/Booking.js");
@@ -37,9 +38,7 @@ function getUserDataFromReq(req) {
   });
 }
 mongoose
-  .connect(
-    "mongodb+srv://hitanshu0729:E0pWVHfBFvnkMZjW@cluster1.wjhjonm.mongodb.net/booking?retryWrites=true&w=majority&appName=Cluster1"
-  )
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected");
   })
@@ -64,6 +63,7 @@ app.post("/register", async (req, res) => {
     res.status(422).json(e);
   }
 });
+const Upload = require("./Helpers/Upload.js");
 app.post("/login", async (req, res) => {
   mongoose.connect(process.env.MONGO_URI);
   const { email, password } = req.body;
@@ -136,31 +136,66 @@ app.get("/profile", (req, res) => {
   }
 });
 app.post("/upload-by-link", async (req, res) => {
-  const { link } = req.body;
-  const newName = "photo" + Date.now() + ".jpg";
-  const dest = path.join(__dirname, "uploads", newName);
-  await imageDownloader.image({
-    url: link,
-    dest: dest,
-  });
-  res.json(newName);
+  try {
+    const { link } = req.body;
+    console.log(req.body);
+    const fileurl = await cloudinary.uploader.upload(link);
+    console.log(fileurl.secure_url);
+    res.json(fileurl.secure_url);
+  } catch (e) {
+    res.status(422).json({ error: e.message });
+    // res.status(422).json({ error: e.message });
+  }
 });
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json(true);
 });
-const photosMiddleware = multer({ dest: "uploads" });
-app.post("/upload", photosMiddleware.array("photos", 100), async (req, res) => {
-  const uploadedFiles = [];
-  for (let i = 0; i < req.files.length; i++) {
-    const { path, originalname } = req.files[i];
-    const parts = originalname.split(".");
-    const ext = parts[parts.length - 1];
-    const newPath = path + "." + ext;
-    fs.renameSync(path, newPath);
-    uploadedFiles.push(newPath.replace("uploads\\", ""));
-  }
-  res.json(uploadedFiles);
+// const storage = multer.memoryStorage(); // Use memory storage for binary data
+
+const upload = multer({
+  storage: multer.diskStorage({}),
+  limits: { fileSize: 5000000 }, // 500 KB limit
 });
+const cloudinary = require("cloudinary").v2;
+// require("dotenv").config();
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_KEY,
+  api_secret: process.env.CLOUD_SECRET,
+});
+uploadFile = async (filePath) => {
+  console.log(filePath);
+  console.log("Hitanshu");
+  try {
+    const result = await cloudinary.uploader.upload(filePath);
+    return result.secure_url;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+const uploadFun = async (req, res) => {
+  console.log(req.files);
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: "No files were uploaded." });
+    }
+
+    const uploadPromises = req.files.map((file) => {
+      // Pass the file buffer and original name to the upload function
+      console.log(file.path);
+      return uploadFile(file.path);
+    });
+    const uploadResults = await Promise.all(uploadPromises);
+
+    res.json(uploadResults);
+  } catch (e) {
+    res.status(422).json({ error: e.message });
+  }
+};
+
+// app.post("/upload", upload.array("photos", 100), uploadFun);
+app.post("/upload", upload.array("photos", 100), uploadFun);
 app.get("/userplaces", (req, res) => {
   const { token } = req.cookies;
   if (token) {

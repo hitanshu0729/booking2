@@ -38,7 +38,7 @@ const PlacesPage = () => {
               <div className="placeImage  bg-gray-100 gap-4 flex items-center shrink-0 grow-0 h-auto">
                 {place.photos.length > 0 && (
                   <img
-                    src={`http://localhost:4000/uploads/${place.photos[0]}`}
+                    src={`${place.photos[0]}`}
                     className="w-full h-auto object-cover bg-top bg-red-300 text-white"
                     alt="image not available"
                   />
