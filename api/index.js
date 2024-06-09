@@ -56,7 +56,9 @@ function getUserDataFromReq(req) {
     );
   });
 }
-mongoose
+
+app.get("/", (req, res) => {
+  mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected");
@@ -65,10 +67,18 @@ mongoose
     console.log(err);
   });
 
-app.get("/", (req, res) => {
   res.send("hello world");
 });
 app.post("/register", async (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   const { name, email, password } = req.body;
   try {
     const userDoc = await User.create({
@@ -143,6 +153,15 @@ app.post("/places", (req, res) => {
   });
 });
 app.get("/profile", (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   console.log(req);
   const { token } = req.cookies;
   if (token) {
@@ -156,6 +175,15 @@ app.get("/profile", (req, res) => {
   }
 });
 app.post("/upload-by-link", async (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   try {
     const { link } = req.body;
     console.log(req.body);
@@ -168,6 +196,15 @@ app.post("/upload-by-link", async (req, res) => {
   }
 });
 app.post("/logout", (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   res.cookie("token", "").json(true);
 });
 // const storage = multer.memoryStorage(); // Use memory storage for binary data
@@ -195,6 +232,15 @@ uploadFile = async (filePath) => {
   }
 };
 const uploadFun = async (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   console.log(req.files);
   try {
     if (!req.files || req.files.length === 0) {
@@ -217,6 +263,15 @@ const uploadFun = async (req, res) => {
 // app.post("/upload", upload.array("photos", 100), uploadFun);
 app.post("/upload", upload.array("photos", 100), uploadFun);
 app.get("/userplaces", (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
@@ -229,12 +284,30 @@ app.get("/userplaces", (req, res) => {
   }
 });
 app.get("/places/:id", async (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   const { id } = req.params;
   // console.log(id);
   // console.log(await PlaceModel.findById(id));
   res.json(await PlaceModel.findById(id));
 });
 app.put("/places", async (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   const { token } = req.cookies;
   console.log(req.body);
   const {
@@ -273,17 +346,27 @@ app.put("/places", async (req, res) => {
   });
 });
 app.get("/places", async (req, res) => {
+  mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
   const data = await PlaceModel.find();
   res.json(data);
 });
 app.get("/bookings", async (req, res) => {
+  
   await mongoose.connect(process.env.MONGO_URI);
   console.log(req);
   const userData = await getUserDataFromReq(req);
   res.json(await Booking.find({ user: userData.id }).populate("place"));
 });
 app.post("/bookings", async (req, res) => {
-  // mongoose.connect(process.env.MONGO_URI);
+  mongoose.connect(process.env.MONGO_URI);
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
     req.body;
