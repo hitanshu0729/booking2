@@ -14,7 +14,7 @@ require("dotenv").config();
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
   cors({
-    origin: "https://deploy-mern-1hit.vercel.app",
+    origin: "https://deploy-mern-frontend-three-eight.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
