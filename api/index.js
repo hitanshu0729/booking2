@@ -12,18 +12,20 @@ const imageDownloader = require("image-downloader");
 const mongoose = require("mongoose");
 require("dotenv").config();
 app.use("/uploads", express.static(__dirname + "/uploads"));
+const allowedOrigins = ['https://deploy-mern-frontend-three-eight.vercel.app', 'http://localhost:5173'];
+
 app.use(
   cors({
-    origin: "https://deploy-mern-frontend-three-eight.vercel.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "Accept",
-      "Origin",
-    ],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'], // Allowed headers
   })
 );
 const bcrypt = require("bcryptjs");
