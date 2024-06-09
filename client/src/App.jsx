@@ -12,7 +12,7 @@ import Placepage from "./Pages/Placepage";
 import PlacePage from "./Pages/Placepage";
 import BookingPage from "./Pages/BookingPage";
 import BookingsPage from "./Pages/BookingsPage";
-axios.defaults.baseURL = "http://localhost:4000";
+axios.defaults.baseURL = "https://deploy-mern-api-three.vercel.app";
 axios.defaults.withCredentials = true;
 function App() {
   return (
