@@ -43,6 +43,7 @@ const cookieParser = require("cookie-parser");
 const bcryptSalt = bcrypt.genSaltSync(10);
 const User = require("./Models/User.js");
 app.use(cookieParser());
+
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
     jwt.verify(
@@ -57,27 +58,28 @@ function getUserDataFromReq(req) {
   });
 }
 
-app.get("/", (req, res) => {
+app.get("/api/", (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   res.send("hello world");
 });
-app.post("/register", async (req, res) => {
+
+app.post("/api/register", async (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   const { name, email, password } = req.body;
   try {
@@ -92,8 +94,10 @@ app.post("/register", async (req, res) => {
     res.status(422).json(e);
   }
 });
+
 const Upload = require("./Helpers/Upload.js");
-app.post("/login", async (req, res) => {
+
+app.post("/api/login", async (req, res) => {
   mongoose.connect(process.env.MONGO_URI);
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
@@ -119,7 +123,8 @@ app.post("/login", async (req, res) => {
     res.status(403).json("not found");
   }
 });
-app.post("/places", (req, res) => {
+
+app.post("/api/places", (req, res) => {
   mongoose.connect(process.env.MONGO_URI);
   const { token } = req.cookies;
   const {
@@ -152,15 +157,16 @@ app.post("/places", (req, res) => {
     res.json(placeDoc);
   });
 });
-app.get("/profile", (req, res) => {
+
+app.get("/api/profile", (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   console.log(req);
   const { token } = req.cookies;
@@ -174,15 +180,16 @@ app.get("/profile", (req, res) => {
     res.json(null);
   }
 });
-app.post("/upload-by-link", async (req, res) => {
+
+app.post("/api/upload-by-link", async (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   try {
     const { link } = req.body;
@@ -192,34 +199,34 @@ app.post("/upload-by-link", async (req, res) => {
     res.json(fileurl.secure_url);
   } catch (e) {
     res.status(422).json({ error: e.message });
-    // res.status(422).json({ error: e.message });
   }
 });
-app.post("/logout", (req, res) => {
+
+app.post("/api/logout", (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   res.cookie("token", "").json(true);
 });
-// const storage = multer.memoryStorage(); // Use memory storage for binary data
 
 const upload = multer({
   storage: multer.diskStorage({}),
   limits: { fileSize: 5000000 }, // 500 KB limit
 });
+
 const cloudinary = require("cloudinary").v2;
-// require("dotenv").config();
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_KEY,
   api_secret: process.env.CLOUD_SECRET,
 });
+
 uploadFile = async (filePath) => {
   console.log(filePath);
   console.log("Hitanshu");
@@ -231,15 +238,16 @@ uploadFile = async (filePath) => {
     return error;
   }
 };
+
 const uploadFun = async (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   console.log(req.files);
   try {
@@ -248,7 +256,6 @@ const uploadFun = async (req, res) => {
     }
 
     const uploadPromises = req.files.map((file) => {
-      // Pass the file buffer and original name to the upload function
       console.log(file.path);
       return uploadFile(file.path);
     });
@@ -260,17 +267,17 @@ const uploadFun = async (req, res) => {
   }
 };
 
-// app.post("/upload", upload.array("photos", 100), uploadFun);
-app.post("/upload", upload.array("photos", 100), uploadFun);
-app.get("/userplaces", (req, res) => {
+app.post("/api/upload", upload.array("photos", 100), uploadFun);
+
+app.get("/api/userplaces", (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   const { token } = req.cookies;
   if (token) {
@@ -283,30 +290,30 @@ app.get("/userplaces", (req, res) => {
     res.json(null);
   }
 });
-app.get("/places/:id", async (req, res) => {
+
+app.get("/api/places/:id", async (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   const { id } = req.params;
-  // console.log(id);
-  // console.log(await PlaceModel.findById(id));
   res.json(await PlaceModel.findById(id));
 });
-app.put("/places", async (req, res) => {
+
+app.put("/api/places", async (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   const { token } = req.cookies;
   console.log(req.body);
@@ -345,27 +352,29 @@ app.put("/places", async (req, res) => {
     }
   });
 });
-app.get("/places", async (req, res) => {
+
+app.get("/api/places", async (req, res) => {
   mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   const data = await PlaceModel.find();
   res.json(data);
 });
-app.get("/bookings", async (req, res) => {
-  
+
+app.get("/api/bookings", async (req, res) => {
   await mongoose.connect(process.env.MONGO_URI);
   console.log(req);
   const userData = await getUserDataFromReq(req);
   res.json(await Booking.find({ user: userData.id }).populate("place"));
 });
-app.post("/bookings", async (req, res) => {
+
+app.post("/api/bookings", async (req, res) => {
   mongoose.connect(process.env.MONGO_URI);
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
