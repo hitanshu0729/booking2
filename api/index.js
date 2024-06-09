@@ -14,8 +14,9 @@ require("dotenv").config();
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://deploy-mern-1hit.vercel.app",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 const bcrypt = require("bcryptjs");
@@ -46,7 +47,7 @@ mongoose
     console.log(err);
   });
 
-app.get("/test", (req, res) => {
+app.get("/", (req, res) => {
   res.send("hello world");
 });
 app.post("/register", async (req, res) => {
